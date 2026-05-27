@@ -1,0 +1,23 @@
+name: Referência de spec
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  spec-ref:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verifica referência a spec
+        run: |
+          PR_BODY=$(gh pr view ${{ github.event.pull_request.number }} --json body -q '.body')
+          if echo "$PR_BODY" | grep -qP 'ESP-[A-Z]+-\d+'; then
+            echo "✓ PR referencia ao menos uma spec (ESP-XXX-NNN)"
+          else
+            echo "✗ ERRO: PR não referencia nenhuma spec (ESP-XXX-NNN)"
+            echo "Adicione uma referência no corpo da PR, ex: '- [ESP-ID-001](link)'"
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
