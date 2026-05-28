@@ -1,0 +1,172 @@
+---
+const pilares = [
+  {
+    simbolo: '&#x25C9;',
+    titulo: 'Privacidade por padrão',
+    descricao: 'Toda funcionalidade é privada desde o design. Compartilhar é uma escolha, nunca uma imposição.',
+    cor: 'var(--highlight-1)',
+  },
+  {
+    simbolo: '&#x25CB;',
+    titulo: 'Acessibilidade',
+    descricao: 'A plataforma é acessível a qualquer pessoa com um navegador moderno. WCAG AA como piso.',
+    cor: 'var(--highlight-2)',
+  },
+  {
+    simbolo: '&#x25B3;',
+    titulo: 'Soberania',
+    descricao: 'Construída e operada no Brasil, para brasileiros. Dados em território nacional.',
+    cor: 'var(--highlight-3)',
+  },
+  {
+    simbolo: '&#x25A1;',
+    titulo: 'Integração',
+    descricao: 'Os produtos da OCA funcionam juntos de forma coesa, compartilhando a mesma linguagem visual.',
+    cor: 'var(--highlight-4)',
+  },
+  {
+    simbolo: '&#x25C7;',
+    titulo: 'Abertura',
+    descricao: 'Código aberto (MIT), documentação aberta (CC BY-SA), governança transparente.',
+    cor: 'var(--highlight-5)',
+  },
+];
+---
+
+<section class="section" aria-labelledby="pilares-titulo">
+  <div class="container">
+    <div class="pilares-cabecalho">
+      <span class="pilares-rotulo">Manifesto</span>
+      <h2 id="pilares-titulo">Nossos pilares</h2>
+    </div>
+
+    <div class="pilares-grid">
+      {pilares.map((p, i) => (
+        <div class="pilar" style={`--cor-pilar: ${p.cor}; --i: ${i}`}>
+          <div class="pilar-icone" aria-hidden="true" set:html={p.simbolo}></div>
+          <h3 class="pilar-titulo">{p.titulo}</h3>
+          <p class="pilar-descricao">{p.descricao}</p>
+
+          <div class="pilar-linha" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="19" stroke="var(--cor-pilar)" stroke-opacity="0.2" stroke-width="1"/>
+              <circle cx="20" cy="20" r="4" fill="var(--cor-pilar)" opacity="0.3"/>
+            </svg>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .pilares-cabecalho {
+    text-align: center;
+    margin-bottom: var(--space-16);
+  }
+
+  .pilares-rotulo {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--highlight-1);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-3);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-full);
+  }
+
+  .pilares-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-6);
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 1024px) {
+    .pilares-grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  .pilar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-8);
+    background: var(--surface-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition:
+      border-color var(--duration-enfase) var(--ease-out),
+      transform var(--duration-enfase) var(--ease-spring);
+    animation: pilar-entra var(--duration-pagina) var(--ease-out) both;
+    animation-delay: calc(var(--i) * 80ms);
+  }
+
+  @keyframes pilar-entra {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .pilar:hover {
+    border-color: var(--cor-pilar);
+    transform: translateY(-2px);
+  }
+
+  .pilar-icone {
+    font-size: var(--text-3xl);
+    color: var(--cor-pilar);
+    margin-bottom: var(--space-4);
+    line-height: 1;
+    transition: transform var(--duration-enfase) var(--ease-spring);
+  }
+
+  .pilar:hover .pilar-icone {
+    transform: scale(1.15);
+  }
+
+  .pilar-titulo {
+    font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .pilar-descricao {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  .pilar-linha {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    transition: opacity var(--duration-padrao) var(--ease-out);
+  }
+
+  .pilar:hover .pilar-linha {
+    opacity: 1;
+  }
+
+  .pilar-linha svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>

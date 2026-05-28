@@ -1,0 +1,67 @@
+---
+import '../styles/global.css';
+import favicon from '../assets/logo.svg';
+
+export interface Props {
+  titulo?: string;
+  descricao?: string;
+}
+
+const {
+  titulo = 'OCA — Uma internet brasileira',
+  descricao = 'A OCA é uma plataforma de internet que prioriza a privacidade do usuário, com produtos integrados e coerentes, mantendo acessibilidade e soberania digital.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={descricao} />
+    <meta name="theme-color" content="#09090b" />
+
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OCA" />
+
+    <link rel="icon" type="image/svg+xml" href={favicon.src} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>{titulo}</title>
+
+    <!-- Previne FOUC -->
+    <script is:inline>
+      const t = localStorage.getItem('oca-tema');
+      if (t === 'claro' || (!t && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+        document.documentElement.classList.add('claro');
+      }
+    </script>
+  </head>
+  <body>
+    <slot />
+
+    <!-- Scroll reveal -->
+    <script is:inline>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('visivel');
+              observer.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+
+      document.querySelectorAll('.revelar').forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>

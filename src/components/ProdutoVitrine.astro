@@ -1,0 +1,146 @@
+---
+interface Props {
+  indice: number;
+  titulo: string;
+  descricao: string;
+}
+const { indice, titulo, descricao } = Astro.props;
+
+const cores = ['--highlight-1', '--highlight-2', '--highlight-3'];
+const cor = cores[indice % cores.length];
+---
+
+<article class="card-produto" style={`--cor-card: var(${cor})`}>
+  <div class="card-forma" aria-hidden="true">
+    <svg viewBox="0 0 200 200" fill="none">
+      <defs>
+        <linearGradient id={`g-${indice}`} x1="0" y1="0" x2="200" y2="200">
+          <stop offset="0%" stop-color="var(--cor-card)" stop-opacity="0.15"/>
+          <stop offset="100%" stop-color="var(--cor-card)" stop-opacity="0.05"/>
+        </linearGradient>
+      </defs>
+      {indice === 0 && (
+        <polygon points="100,20 180,80 160,180 40,180 20,80"
+          fill={`url(#g-${indice})`} stroke="var(--cor-card)" stroke-opacity="0.2" stroke-width="1"/>
+      )}
+      {indice === 1 && (
+        <rect x="30" y="30" width="140" height="140" rx="8"
+          fill={`url(#g-${indice})`} stroke="var(--cor-card)" stroke-opacity="0.2" stroke-width="1" transform="rotate(15 100 100)"/>
+      )}
+      {indice === 2 && (
+        <circle cx="100" cy="100" r="80"
+          fill={`url(#g-${indice})`} stroke="var(--cor-card)" stroke-opacity="0.2" stroke-width="1" stroke-dasharray="8 4"/>
+      )}
+    </svg>
+  </div>
+
+  <div class="card-texto">
+    <span class="card-numero">{(indice + 1).toString().padStart(2, '0')}</span>
+    <h3 class="card-titulo">{titulo}</h3>
+    <p class="card-descricao">{descricao}</p>
+  </div>
+
+  <div class="card-brilho" aria-hidden="true"></div>
+</article>
+
+<style>
+  .card-produto {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 320px;
+    padding: var(--space-8);
+    background: var(--surface-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      transform var(--duration-enfase) var(--ease-spring),
+      border-color var(--duration-enfase) var(--ease-out),
+      box-shadow var(--duration-enfase) var(--ease-out);
+    cursor: default;
+  }
+
+  .card-produto:hover {
+    transform: translateY(-4px);
+    border-color: var(--cor-card);
+    box-shadow: 0 8px 40px -8px rgb(from var(--cor-card) r g b / 0.15),
+                0 0 0 1px var(--cor-card);
+  }
+
+  .card-forma {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 200px;
+    margin: 0 auto;
+    transition: transform var(--duration-enfase) var(--ease-out);
+  }
+
+  .card-produto:hover .card-forma {
+    transform: scale(1.08);
+  }
+
+  .card-forma svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-texto {
+    position: relative;
+    z-index: 1;
+  }
+
+  .card-numero {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.1em;
+  }
+
+  .card-titulo {
+    font-size: var(--text-xl);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .card-descricao {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  .card-brilho {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgb(from var(--cor-card) r g b / 0.06),
+      transparent 40%
+    );
+    opacity: 0;
+    transition: opacity var(--duration-enfase) var(--ease-out);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .card-produto:hover .card-brilho {
+    opacity: 1;
+  }
+</style>
+
+<script is:inline>
+  document.querySelectorAll('.card-produto').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mouse-x', `${x}%`);
+      card.style.setProperty('--mouse-y', `${y}%`);
+    });
+  });
+</script>

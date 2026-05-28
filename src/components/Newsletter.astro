@@ -1,0 +1,247 @@
+---
+const token = import.meta.env.PUBLIC_GITHUB_TOKEN || '';
+---
+
+<section class="section" id="novidades" aria-labelledby="novidades-titulo">
+  <div class="container">
+    <div class="news-wrapper">
+      <div class="news-geo" aria-hidden="true">
+        <svg viewBox="0 0 300 300" fill="none">
+          <defs>
+            <linearGradient id="news-g" x1="0" y1="0" x2="300" y2="300">
+              <stop offset="0%" stop-color="var(--highlight-1)" stop-opacity="0.08"/>
+              <stop offset="100%" stop-color="var(--highlight-2)" stop-opacity="0.04"/>
+            </linearGradient>
+          </defs>
+          <path d="M150 30 L260 80 L260 220 L150 270 L40 220 L40 80 Z" fill="url(#news-g)" stroke="var(--highlight-1)" stroke-opacity="0.15" stroke-width="1"/>
+          <path d="M150 70 L220 100 L220 180 L150 210 L80 180 L80 100 Z" fill="none" stroke="var(--highlight-2)" stroke-opacity="0.1" stroke-width="1"/>
+          <circle cx="150" cy="140" r="30" fill="var(--highlight-1)" opacity="0.05" stroke="var(--highlight-1)" stroke-opacity="0.2" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <div class="news-conteudo">
+        <span class="news-rotulo">Fique por dentro</span>
+        <h2 id="novidades-titulo" class="news-titulo">Receba novidades da OCA</h2>
+        <p class="news-descricao">
+          Seja o primeiro a saber quando novos produtos e funcionalidades forem lançados.
+          Sem spam, só o que importa.
+        </p>
+
+        <form class="news-form" id="form-novidades">
+          <div class="news-input-wrap">
+            <input
+              type="email"
+              class="news-input"
+              id="email-input"
+              placeholder="seu@email.com"
+              aria-label="Seu email"
+              required
+            />
+            <button type="submit" class="news-botao" id="news-botao">
+              Inscrever
+            </button>
+          </div>
+          <p class="news-feedback" id="news-feedback" role="status" aria-live="polite"></p>
+        </form>
+
+        <p class="news-disclaimer">
+          Seu email será usado apenas para comunicados oficiais da OCA.
+          Nunca compartilharemos seus dados.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  const GITHUB_TOKEN = {JSON.stringify(token)};
+
+  const form = document.getElementById('form-novidades') as HTMLFormElement;
+  const input = document.getElementById('email-input') as HTMLInputElement;
+  const botao = document.getElementById('news-botao') as HTMLButtonElement;
+  const feedback = document.getElementById('news-feedback') as HTMLParagraphElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = input.value.trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      feedback.className = 'news-feedback erro';
+      feedback.textContent = 'Insira um email válido.';
+      return;
+    }
+
+    botao.disabled = true;
+    botao.textContent = 'Enviando...';
+    feedback.className = 'news-feedback';
+    feedback.textContent = '';
+
+    try {
+      const res = await fetch(
+        'https://api.github.com/repos/OCA-Internet-Brasileira/oca-vitrine/issues',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            Accept: 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: `Newsletter: ${email}`,
+            body: `Email cadastrado em ${new Date().toLocaleDateString('pt-BR')}.`,
+            labels: ['newsletter'],
+          }),
+        },
+      );
+
+      if (res.ok) {
+        feedback.className = 'news-feedback sucesso';
+        feedback.textContent = 'Inscrição confirmada! Entraremos em contato.';
+        input.value = '';
+      } else {
+        const err = await res.json().catch(() => ({}));
+        feedback.className = 'news-feedback erro';
+        feedback.textContent = (err as any).message || 'Erro ao processar. Tente novamente.';
+      }
+    } catch {
+      feedback.className = 'news-feedback erro';
+      feedback.textContent = 'Erro de conexão. Tente novamente.';
+    } finally {
+      botao.disabled = false;
+      botao.textContent = 'Inscrever';
+    }
+  });
+</script>
+
+<style>
+  .news-wrapper {
+    position: relative;
+    display: grid;
+    gap: var(--space-12);
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--space-16);
+    background: var(--surface-1);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .news-geo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .news-geo svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+  }
+
+  .news-conteudo {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .news-rotulo {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--highlight-1);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-3);
+  }
+
+  .news-titulo {
+    margin-bottom: var(--space-4);
+  }
+
+  .news-descricao {
+    max-width: 400px;
+    margin: 0 auto var(--space-8);
+    text-wrap: balance;
+  }
+
+  .news-form {
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .news-input-wrap {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+
+  .news-input {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background: var(--surface-2);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: border-color var(--duration-padrao) var(--ease-out);
+  }
+
+  .news-input:focus {
+    border-color: var(--color-primary);
+  }
+
+  .news-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .news-botao {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    font-family: var(--font-sans);
+    color: var(--text-inverse);
+    background: linear-gradient(135deg, var(--highlight-2), var(--highlight-1));
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      transform var(--duration-padrao) var(--ease-spring),
+      opacity var(--duration-padrao) var(--ease-out);
+  }
+
+  .news-botao:hover:not(:disabled) {
+    transform: scale(1.03);
+  }
+
+  .news-botao:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .news-feedback {
+    font-size: var(--text-sm);
+    padding: var(--space-2) 0;
+    min-height: 1.5em;
+  }
+
+  .news-feedback.sucesso {
+    color: var(--color-success);
+  }
+
+  .news-feedback.erro {
+    color: var(--color-error);
+  }
+
+  .news-disclaimer {
+    margin-top: var(--space-6);
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+  }
+</style>

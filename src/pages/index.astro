@@ -1,0 +1,91 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Pilares from '../components/Pilares.astro';
+import ProdutoVitrine from '../components/ProdutoVitrine.astro';
+import Newsletter from '../components/Newsletter.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout>
+  <Hero />
+
+  <main>
+    <section class="section" aria-labelledby="produtos-titulo">
+      <div class="container">
+        <div class="secao-cabecalho">
+          <span class="secao-rotulo">Produtos</span>
+          <h2 id="produtos-titulo">O que estamos construindo</h2>
+          <p class="secao-descricao">
+            Produtos que formam uma plataforma coesa — começando pelo serviço que
+            traz sua presença para a internet brasileira.
+          </p>
+        </div>
+
+        <div class="produtos-grid">
+          <ProdutoVitrine
+            indice={0}
+            titulo="Site profissional"
+            descricao="Seu site com design exclusivo, otimizado e hospedado na OCA. Performance, acessibilidade e privacidade desde a primeira linha de código."
+          />
+          <ProdutoVitrine
+            indice={1}
+            titulo="Integração nativa"
+            descricao="Conectado ao ecossistema OCA: autenticação por passkey, identidade unificada, e pronto para o futuro da plataforma."
+          />
+          <ProdutoVitrine
+            indice={2}
+            titulo="Gestão descomplicada"
+            descricao="Painel simples para acompanhar visitas, atualizar conteúdo e gerenciar seu espaço — sem complicação técnica."
+          />
+        </div>
+      </div>
+    </section>
+
+    <Pilares />
+    <Newsletter />
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .secao-cabecalho {
+    text-align: center;
+    margin-bottom: var(--space-16);
+  }
+
+  .secao-rotulo {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--highlight-2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-3);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-full);
+  }
+
+  .secao-descricao {
+    max-width: 520px;
+    margin: var(--space-4) auto 0;
+    text-wrap: balance;
+  }
+
+  .produtos-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .produtos-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
